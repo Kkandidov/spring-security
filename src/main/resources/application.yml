@@ -1,2 +1,13 @@
 server:
   port: 9999
+
+spring.jpa:
+  database: POSTGRESQL
+  hibernate.ddl-auto: update
+  show-sql: true
+
+spring.datasource:
+  driverClassName: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5433/security
+  username: postgres
+  password: postgre
