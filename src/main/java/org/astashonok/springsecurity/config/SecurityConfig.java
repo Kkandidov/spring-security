@@ -1,13 +1,11 @@
 package org.astashonok.springsecurity.config;
 
-import static org.astashonok.springsecurity.model.Permission.DEVELOPERS_READ;
-import static org.astashonok.springsecurity.model.Permission.DEVELOPERS_WRITE;
 import static org.astashonok.springsecurity.model.Role.ADMIN;
 import static org.astashonok.springsecurity.model.Role.USER;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,6 +17,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
@@ -27,9 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .csrf().disable()
         .authorizeRequests()
         .antMatchers("/").permitAll()
-        .antMatchers(HttpMethod.GET, "/api/**").hasAuthority(DEVELOPERS_READ.getPermission())
-        .antMatchers(HttpMethod.POST, "/api/**").hasAuthority(DEVELOPERS_WRITE.getPermission())
-        .antMatchers(HttpMethod.DELETE, "/api/**").hasAuthority(DEVELOPERS_WRITE.getPermission())
         .anyRequest()
         .authenticated()
         .and()

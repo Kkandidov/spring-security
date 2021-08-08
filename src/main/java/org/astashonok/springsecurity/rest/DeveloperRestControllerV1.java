@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.astashonok.springsecurity.model.Developer;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +24,14 @@ public class DeveloperRestControllerV1 {
   ));
 
   @GetMapping
+  @PreAuthorize("hasAuthority('developers:read')")
   public List<Developer> getAll() {
     return developers;
   }
 
   @GetMapping("/{id}")
-  public Developer getAll(@PathVariable Long id) {
+  @PreAuthorize("hasAuthority('developers:read')")
+  public Developer getById(@PathVariable Long id) {
     return id == null
         ? null
         : developers.stream()
@@ -38,6 +41,7 @@ public class DeveloperRestControllerV1 {
   }
 
   @PostMapping
+  @PreAuthorize("hasAuthority('developers:write')")
   public Developer create(@RequestBody Developer developer) {
     if (developer == null) {
       return null;
@@ -48,6 +52,7 @@ public class DeveloperRestControllerV1 {
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasAuthority('developers:write')")
   public void deleteById(@PathVariable Long id) {
     if (id != null) {
       developers.removeIf(developer -> id.equals(developer.getId()));
