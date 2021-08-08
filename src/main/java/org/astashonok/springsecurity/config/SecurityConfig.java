@@ -1,5 +1,7 @@
 package org.astashonok.springsecurity.config;
 
+import static org.astashonok.springsecurity.model.Permission.DEVELOPERS_READ;
+import static org.astashonok.springsecurity.model.Permission.DEVELOPERS_WRITE;
 import static org.astashonok.springsecurity.model.Role.ADMIN;
 import static org.astashonok.springsecurity.model.Role.USER;
 
@@ -25,9 +27,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .csrf().disable()
         .authorizeRequests()
         .antMatchers("/").permitAll()
-        .antMatchers(HttpMethod.GET, "/api/**").hasAnyRole(ADMIN.name(), USER.name())
-        .antMatchers(HttpMethod.POST, "/api/**").hasRole(ADMIN.name())
-        .antMatchers(HttpMethod.DELETE, "/api/**").hasRole(ADMIN.name())
+        .antMatchers(HttpMethod.GET, "/api/**").hasAuthority(DEVELOPERS_READ.getPermission())
+        .antMatchers(HttpMethod.POST, "/api/**").hasAuthority(DEVELOPERS_WRITE.getPermission())
+        .antMatchers(HttpMethod.DELETE, "/api/**").hasAuthority(DEVELOPERS_WRITE.getPermission())
         .anyRequest()
         .authenticated()
         .and()
@@ -41,12 +43,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         User.builder()
             .username("admin")
             .password(passwordEncoder().encode("admin"))
-            .roles(ADMIN.name())
+            .authorities(ADMIN.getAuthorities())
             .build(),
         User.builder()
             .username("user")
             .password(passwordEncoder().encode("user"))
-            .roles(USER.name())
+            .authorities(USER.getAuthorities())
             .build()
     );
   }
