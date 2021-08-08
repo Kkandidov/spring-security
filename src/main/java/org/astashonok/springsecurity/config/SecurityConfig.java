@@ -1,7 +1,11 @@
 package org.astashonok.springsecurity.config;
 
+import static org.astashonok.springsecurity.model.Role.ADMIN;
+import static org.astashonok.springsecurity.model.Role.USER;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,7 +21,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    super.configure(http);
+    http
+        .csrf().disable()
+        .authorizeRequests()
+        .antMatchers("/").permitAll()
+        .antMatchers(HttpMethod.GET, "/api/**").hasAnyRole(ADMIN.name(), USER.name())
+        .antMatchers(HttpMethod.POST, "/api/**").hasRole(ADMIN.name())
+        .antMatchers(HttpMethod.DELETE, "/api/**").hasRole(ADMIN.name())
+        .anyRequest()
+        .authenticated()
+        .and()
+        .httpBasic();
   }
 
   @Bean
@@ -27,7 +41,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         User.builder()
             .username("admin")
             .password(passwordEncoder().encode("admin"))
-            .roles("ADMIN")
+            .roles(ADMIN.name())
+            .build(),
+        User.builder()
+            .username("user")
+            .password(passwordEncoder().encode("user"))
+            .roles(USER.name())
             .build()
     );
   }
